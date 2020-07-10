@@ -18,14 +18,20 @@ require("./auth/passport")(passport);
 // Middleware
 server.use(helmet());
 server.use(json());
-server.use(cors());
+
+const corsConfig = {
+  origin: true,
+  credentials: true,
+};
+server.use(cors(corsConfig));
+server.options("*", cors(corsConfig));
 
 // Express Session
 server.use(
   session({
     secret: process.env.SECRET_KEY,
     resave: false, // only resave session when a change is made
-    saveUninitialized: false, // only save cookie/sessions if logged in
+    saveUninitialized: true, // only save cookie/sessions if logged in
     store: new knexSessionStore({
       knex: require("../database/dbConfig"),
       tablename: "sessions",
@@ -42,6 +48,11 @@ server.use(
 // Passport middleware
 server.use(passport.initialize());
 server.use(passport.session());
+
+server.use((req, res, next) => {
+  console.log("req.session", req.session, "sid", req.sessionID);
+  return next();
+});
 
 // Routes
 server.use("/", authRoutes);

@@ -18,6 +18,11 @@ const createUser = async (req, res) => {
     handleResponse(res, 400, "Please ensure all fields are complete");
   }
 
+  // check to see if user exists
+  if (getUserByEmail(email)) {
+    handleResponse(res, 400, "User already exists");
+  }
+
   const hash = bcrypt.hashSync(password, 10);
 
   try {

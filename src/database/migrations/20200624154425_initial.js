@@ -1,4 +1,4 @@
-export async function up(knex) {
+exports.up = function (knex, Promise) {
   return (
     knex.schema
       .createTable("roles", (table) => {
@@ -134,9 +134,9 @@ export async function up(knex) {
           .onUpdate("CASCADE");
       })
   );
-}
+};
 
-export async function down(knex) {
+exports.down = function (knex, Promise) {
   return knex.schema
     .dropTableIfExists("favoritedAnimals")
     .dropTableIfExists("notes")
@@ -149,4 +149,4 @@ export async function down(knex) {
     .dropTableIfExists("userPreferences")
     .dropTableIfExists("users")
     .dropTableIfExists("roles");
-}
+};
