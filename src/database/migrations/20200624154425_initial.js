@@ -7,10 +7,12 @@ exports.up = function (knex, Promise) {
       })
       .createTable("users", (table) => {
         table.increments();
-        table.string("firstname", 128).notNullable();
-        table.string("lastname", 128).notNullable();
+        table.string("googleId", 128);
+        table.string("facebookId", 128);
+        table.string("firstname", 128);
+        table.string("lastname", 128);
         table.string("email", 128).unique().notNullable();
-        table.string("password", 128).notNullable();
+        table.string("password", 128);
         table
           .integer("roleId")
           .unsigned()
