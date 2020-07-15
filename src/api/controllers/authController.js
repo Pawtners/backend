@@ -11,19 +11,22 @@ function comparePass(userPassword, databasePassword) {
 }
 
 const createUser = async (req, res) => {
-  const { email, password, firstname, lastname, roleId } = req.body;
+  // local user
+  const { email, password, firstname, lastname, roleId } = req.body || req;
+  let hash = null;
 
   // check required fields
-  if (!email || !password || !firstname || !lastname) {
-    handleResponse(res, 400, "Please ensure all fields are complete");
+  if (req.body) {
+    if (!email || !password || !firstname || !lastname) {
+      handleResponse(res, 400, "Please ensure all fields are complete");
+    }
+    // check to see if user exists
+    if (getUserByEmail(email)) {
+      handleResponse(res, 400, "User already exists");
+    }
+    hash = bcrypt.hashSync(password, 10);
   }
-
-  // check to see if user exists
-  if (getUserByEmail(email)) {
-    handleResponse(res, 400, "User already exists");
-  }
-
-  const hash = bcrypt.hashSync(password, 10);
+  console.log(hash);
 
   try {
     const [id] = await db("users").insert(
@@ -37,6 +40,7 @@ const createUser = async (req, res) => {
       },
       "id"
     );
+
     return getUser(id);
   } catch (err) {
     console.log("ERROR from createUser", err);

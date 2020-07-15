@@ -49,13 +49,8 @@ server.use(
 server.use(passport.initialize());
 server.use(passport.session());
 
-server.use((req, res, next) => {
-  console.log("req.session", req.session, "sid", req.sessionID);
-  return next();
-});
-
 // Routes
-server.use("/", authRoutes);
+server.use("/auth", authRoutes);
 server.use("/animals", animalRoutes);
 
 server.get("/", (req, res) => {
