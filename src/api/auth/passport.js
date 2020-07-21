@@ -64,12 +64,14 @@ module.exports = (passport) => {
               ]);
           } else if (!user) {
             // if does not exist, create new user in db
+            console.log("no user, google");
             user = await Auth.createUser({
               firstName: name.givenName,
               lastName: name.familyName,
               email: email,
               googleId: id,
             });
+            console.log(user);
           }
           return done(null, user);
         } catch (err) {

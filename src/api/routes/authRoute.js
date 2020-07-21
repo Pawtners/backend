@@ -85,7 +85,9 @@ router.get(
 // cb route for google to redirect
 router.get(
   "/google/redirect",
-  passport.authenticate("google", { failureRedirect: "/login" }),
+  passport.authenticate("google", {
+    failureRedirect: `${process.env.PLATFORM_URL}/login`,
+  }),
   function (req, res) {
     console.log("Google redirect");
     res.redirect(`${process.env.PLATFORM_URL}/dashboard`);
@@ -100,7 +102,9 @@ router.get(
 
 router.get(
   "/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  passport.authenticate("facebook", {
+    failureRedirect: `${process.env.PLATFORM_URL}/login`,
+  }),
   function (req, res) {
     console.log("Facebook redirect");
     res.redirect(`${process.env.PLATFORM_URL}/dashboard`);

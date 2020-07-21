@@ -12,11 +12,14 @@ function comparePass(userPassword, databasePassword) {
 
 const createUser = async (req, res) => {
   // local user || 3rd party provider
-  const { email, password, firstName, lastName, roleId } = req.body || req;
+  const { email, password, firstName, lastName, roleId, googleId, facebookId } =
+    req.body || req;
   let hash = null;
 
   // checks for local user
   if (req.body) {
+    hash = bcrypt.hashSync(password, 10);
+
     if (!email || !password || !firstName || !lastName) {
       handleResponse(res, 400, "Please ensure all fields are complete");
     }
@@ -30,8 +33,7 @@ const createUser = async (req, res) => {
         if (user.password) {
           handleResponse(res, 400, "User already exists");
         } else {
-          // local auth doesn't exist, link accounts
-          hash = bcrypt.hashSync(password, 10);
+          // user exists but no local auth, link accounts
           return db("users")
             .where({ email: email })
             .update(
@@ -43,25 +45,29 @@ const createUser = async (req, res) => {
     } catch (err) {
       console.log({ error: err });
     }
+  }
+  console.log("TEST TEST");
+  // no existing user, add
+  try {
+    console.log("No existing user");
+    const [id] = await db("users").insert(
+      {
+        email: email,
+        password: hash,
+        firstName: firstName,
+        lastName: lastName,
+        roleId: roleId || 2,
+        createdAt: Date.now(),
+        googleId: googleId || null,
+        facebookId: facebookId || null,
+      },
+      "id"
+    );
 
-    try {
-      const [id] = await db("users").insert(
-        {
-          email: email,
-          password: hash,
-          firstName: firstName,
-          lastName: lastName,
-          roleId: roleId || 2,
-          createdAt: Date.now(),
-        },
-        "id"
-      );
-
-      return getUser(id);
-    } catch (err) {
-      console.log("ERROR from createUser", err);
-      return { error: err };
-    }
+    return getUser(id);
+  } catch (err) {
+    console.log("ERROR from createUser", err);
+    return { error: err };
   }
 };
 
