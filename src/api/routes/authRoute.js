@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
   const user = await Auth.createUser(req, res);
   try {
     console.log("USER FROM POST", user);
-    if (user) {
+    if (!user.error) {
       handleResponse(res, 200, `You are now registered and can log in`);
     }
   } catch (err) {

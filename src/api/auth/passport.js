@@ -65,8 +65,8 @@ module.exports = (passport) => {
           } else if (!user) {
             // if does not exist, create new user in db
             user = await Auth.createUser({
-              firstname: name.givenName,
-              lastname: name.familyName,
+              firstName: name.givenName,
+              lastName: name.familyName,
               email: email,
               googleId: id,
             });
@@ -108,8 +108,8 @@ module.exports = (passport) => {
           } else if (!user) {
             // if does not exist, create new user in db
             user = await Auth.createUser({
-              firstname: name.givenName,
-              lastname: name.familyName,
+              firstName: name.givenName,
+              lastName: name.familyName,
               email: email,
               facebookId: id,
             });

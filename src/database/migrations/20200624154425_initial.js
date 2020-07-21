@@ -9,8 +9,8 @@ exports.up = function (knex, Promise) {
         table.increments();
         table.string("googleId", 128);
         table.string("facebookId", 128);
-        table.string("firstname", 128);
-        table.string("lastname", 128);
+        table.string("firstName", 128);
+        table.string("lastName", 128);
         table.string("email", 128).unique().notNullable();
         table.string("password", 128);
         table

@@ -12,38 +12,56 @@ function comparePass(userPassword, databasePassword) {
 
 const createUser = async (req, res) => {
   // local user || 3rd party provider
-  const { email, password, firstname, lastname, roleId } = req.body || req;
+  const { email, password, firstName, lastName, roleId } = req.body || req;
   let hash = null;
 
   // checks for local user
   if (req.body) {
-    if (!email || !password || !firstname || !lastname) {
+    if (!email || !password || !firstName || !lastName) {
       handleResponse(res, 400, "Please ensure all fields are complete");
     }
+
     // check to see if user exists
-    if (getUserByEmail(email)) {
-      handleResponse(res, 400, "User already exists");
+    try {
+      const user = await getUserByEmail(email);
+
+      if (user) {
+        // local auth account exists
+        if (user.password) {
+          handleResponse(res, 400, "User already exists");
+        } else {
+          // local auth doesn't exist, link accounts
+          hash = bcrypt.hashSync(password, 10);
+          return db("users")
+            .where({ email: email })
+            .update(
+              { password: hash, firstName: firstName, lastName: lastName },
+              ["id", "firstName", "lastName"]
+            );
+        }
+      }
+    } catch (err) {
+      console.log({ error: err });
     }
-    hash = bcrypt.hashSync(password, 10);
-  }
 
-  try {
-    const [id] = await db("users").insert(
-      {
-        email: email,
-        password: hash,
-        firstname: firstname,
-        lastname: lastname,
-        roleId: roleId || 2,
-        createdAt: Date.now(),
-      },
-      "id"
-    );
+    try {
+      const [id] = await db("users").insert(
+        {
+          email: email,
+          password: hash,
+          firstName: firstName,
+          lastName: lastName,
+          roleId: roleId || 2,
+          createdAt: Date.now(),
+        },
+        "id"
+      );
 
-    return getUser(id);
-  } catch (err) {
-    console.log("ERROR from createUser", err);
-    return { error: err };
+      return getUser(id);
+    } catch (err) {
+      console.log("ERROR from createUser", err);
+      return { error: err };
+    }
   }
 };
 
