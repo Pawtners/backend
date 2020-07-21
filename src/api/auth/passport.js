@@ -1,6 +1,7 @@
 const db = require("../../database/dbConfig");
 const LocalStrategy = require("passport-local").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const FacebookStrategy = require("passport-facebook").Strategy;
 const { comparePass } = require("../controllers/authController");
 const keys = require("../../config/keys");
 const Auth = require("../controllers/authController");
@@ -39,30 +40,84 @@ module.exports = (passport) => {
       {
         clientID: keys.google.clientID,
         clientSecret: keys.google.clientSecret,
-        callbackURL: "http://localhost:3001/auth/google/redirect",
-        // passReqToCallback: true, // allows us to pass in the req from our route (lets us check if a user is logged in or not)
+        callbackURL: `${process.env.SERVER_API_URL}/auth/google/redirect`,
       },
 
       async function (accessToken, refreshToken, profile, done) {
-        console.log("Google profile", profile);
-        const { id, name, emails, photos } = profile;
-        console.log(emails[0].value);
-        // check if user exists using email
-        const user = await db("users").where("email", emails[0].value).first();
-        console.log("User", user);
-        // if exists and no googleId, add googleId
-        if (user && user.googleId === null) {
-          user.googleId = profile.id;
-        } else {
-          // if does not exist, create new user in db
-          user = await Auth.createUser({
-            firstname: name.givenName,
-            lastname: name.familyName,
-            email: emails[0].value,
-          });
+        const { id, name, emails } = profile;
+        const email = emails[0].value;
+        try {
+          // check if user exists using email
+          let user = await db("users").where("email", email).first();
+          console.log("User", user);
+
+          // if exists and no googleId, add googleId
+          if (user && user.googleId === null) {
+            console.log("Adding Google ID");
+            return db("users")
+              .where({ email: email })
+              .update({ googleId: id }, [
+                "id",
+                "firstName",
+                "lastName",
+                "googleId",
+              ]);
+          } else if (!user) {
+            // if does not exist, create new user in db
+            user = await Auth.createUser({
+              firstname: name.givenName,
+              lastname: name.familyName,
+              email: email,
+              googleId: id,
+            });
+          }
+          return done(null, user);
+        } catch (err) {
+          console.log(err);
         }
-        // return done(null, user);
-        return done(null, user);
+      }
+    )
+  );
+
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: keys.facebook.clientID,
+        clientSecret: keys.facebook.clientSecret,
+        callbackURL: `${process.env.SERVER_API_URL}/auth/facebook/callback`,
+        profileFields: ["id", "email", "name"],
+        enableProof: true,
+      },
+      async function (accessToken, refreshToken, profile, done) {
+        console.log("Facebook profile", profile);
+        const { id, name, emails } = profile;
+        const email = emails[0].value;
+        try {
+          // check if user exists using email
+          let user = await db("users").where("email", email).first();
+
+          if (user && user.facebookId === null) {
+            return db("users")
+              .where({ email: email })
+              .update({ facebookId: id }, [
+                "id",
+                "firstName",
+                "lastName",
+                "facebookId",
+              ]);
+          } else if (!user) {
+            // if does not exist, create new user in db
+            user = await Auth.createUser({
+              firstname: name.givenName,
+              lastname: name.familyName,
+              email: email,
+              facebookId: id,
+            });
+          }
+          return done(null, user);
+        } catch (err) {
+          console.log(err);
+        }
       }
     )
   );

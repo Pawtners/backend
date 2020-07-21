@@ -1,3 +1,4 @@
+require("dotenv").config();
 const router = require("express").Router();
 const passport = require("passport");
 const Auth = require("../controllers/authController");
@@ -18,12 +19,6 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/users", isLoggedIn, async (req, res) => {
-  console.log(
-    "hitting users endpoint",
-    req.session,
-    "isAuthenticated()",
-    req.isAuthenticated()
-  );
   const users = await Auth.getUsers();
   handleResponse(res, 200, users);
 });
@@ -79,7 +74,7 @@ router.get("/logout", (req, res) => {
 
 // Provider Logins
 
-// auth with google
+// GOOGLE
 router.get(
   "/google",
   passport.authenticate("google", {
@@ -93,7 +88,22 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   function (req, res) {
     console.log("Google redirect");
-    res.redirect(`http://localhost:3000/dashboard`);
+    res.redirect(`${process.env.PLATFORM_URL}/dashboard`);
+  }
+);
+
+// FACEBOOK
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { scope: ["email"] })
+);
+
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function (req, res) {
+    console.log("Facebook redirect");
+    res.redirect(`${process.env.PLATFORM_URL}/dashboard`);
   }
 );
 

@@ -11,11 +11,11 @@ function comparePass(userPassword, databasePassword) {
 }
 
 const createUser = async (req, res) => {
-  // local user
+  // local user || 3rd party provider
   const { email, password, firstname, lastname, roleId } = req.body || req;
   let hash = null;
 
-  // check required fields
+  // checks for local user
   if (req.body) {
     if (!email || !password || !firstname || !lastname) {
       handleResponse(res, 400, "Please ensure all fields are complete");
@@ -26,7 +26,6 @@ const createUser = async (req, res) => {
     }
     hash = bcrypt.hashSync(password, 10);
   }
-  console.log(hash);
 
   try {
     const [id] = await db("users").insert(
