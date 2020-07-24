@@ -46,7 +46,7 @@ const createUser = async (req, res) => {
       console.log({ error: err });
     }
   }
-  console.log("TEST TEST");
+
   // no existing user, add
   try {
     console.log("No existing user");
@@ -73,7 +73,6 @@ const createUser = async (req, res) => {
 
 const getUser = async (id) => {
   const user = await db("users").where({ id }).first();
-  console.log(user);
   return user;
 };
 
