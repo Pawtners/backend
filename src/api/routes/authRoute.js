@@ -6,7 +6,6 @@ const Auth = require("../controllers/authController");
 const { handleResponse } = require("../utils");
 
 function isLoggedIn(req, res, next) {
-  console.log("isLoggedIn", req.isAuthenticated());
   if (req.isAuthenticated()) {
     return next();
   }
@@ -26,7 +25,6 @@ router.get("/users", isLoggedIn, async (req, res) => {
 router.post("/register", async (req, res) => {
   const user = await Auth.createUser(req, res);
   try {
-    console.log("USER FROM POST", user);
     if (!user.error) {
       handleResponse(res, 200, `You are now registered and can log in`);
     }

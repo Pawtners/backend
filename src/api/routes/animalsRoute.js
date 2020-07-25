@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const Animals = require("../controllers/animalsController");
-const { handleResponse } = require("../utils");
+const { handleResponse, validateAnimalId, checkIfStaff } = require("../utils");
 
 // POST
 
@@ -57,7 +57,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateAnimalId, async (req, res) => {
   const { id } = req.params;
   try {
     const animal = await Animals.getAnimal(id);
@@ -70,10 +70,31 @@ router.get("/:id", async (req, res) => {
 
 // PUT
 
+router.put("/:id", validateAnimalId, async (req, res) => {
+  const id = req.params.id;
+  const updates = req.body;
+
+  try {
+    const updatedAnimal = await Animals.updateAnimal(id, updates);
+    return handleResponse(res, 200, { updated: updatedAnimal });
+  } catch (err) {
+    console.log(err);
+    return handleResponse(res, 500, { error: err });
+  }
+});
+
 // DELETE
 
-router.delete(":/id", async (req, res) => {
+router.delete("/:id", validateAnimalId, checkIfStaff, async (req, res) => {
+  const id = req.params.id;
   try {
+    const deleted = await Animals.deleteAnimal(id);
+    console.log(deleted);
+    if (deleted === 1) {
+      return handleResponse(res, 200, {
+        message: `Successfully deleted animal with id ${id}`,
+      });
+    }
   } catch (err) {
     console.log(err);
   }

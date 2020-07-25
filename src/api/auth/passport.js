@@ -125,12 +125,10 @@ module.exports = (passport) => {
   );
 
   passport.serializeUser((user, done) => {
-    console.log("serializer called", user);
     done(null, user.id);
   });
 
   passport.deserializeUser(async (id, done) => {
-    console.log("deserializer called", id);
     const user = await db("users").where({ id }).first();
     try {
       done(null, user);

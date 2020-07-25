@@ -1,5 +1,4 @@
 const db = require("../../database/dbConfig");
-const { handleResponse } = require("../utils");
 
 const getAnimals = async () => {
   const animals = await db("animals");
@@ -21,8 +20,30 @@ const registerAnimal = async (animalInfo) => {
   }
 };
 
+const updateAnimal = async (id, updates) => {
+  try {
+    const updatedAnimal = await db("animals").update(updates).where({ id });
+    return getAnimal(id);
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
+};
+
+const deleteAnimal = async (id) => {
+  try {
+    const deleted = await db("animals").where({ id }).del();
+
+    return deleted;
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
+};
 module.exports = {
   registerAnimal,
   getAnimals,
   getAnimal,
+  updateAnimal,
+  deleteAnimal,
 };
