@@ -26,4 +26,33 @@ router.post("/:id", checkIfStaff, validateAnimalId, async (req, res) => {
   }
 });
 
+router.get("/animal/:id", validateAnimalId, async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const conditions = await Conditions.getConditionsForAnimal(id);
+    return handleResponse(res, 200, { conditions });
+  } catch (err) {
+    console.log(err);
+    return handleResponse(res, 500, { error: err });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+
+  // TODO: validate condition
+
+  try {
+    const conditionsLeft = await Conditions.deleteConditionFromAnimal(id);
+    return handleResponse(res, 200, {
+      message: `Deleted condition id ${id}`,
+      conditionsLeft,
+    });
+  } catch (err) {
+    console.log(err);
+    return handleResponse(res, 500, { error: err });
+  }
+});
+
 module.exports = router;

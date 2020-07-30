@@ -1,5 +1,4 @@
 const db = require("../../database/dbConfig");
-const Animals = require("../controllers/animalsController");
 
 const addConditionsToAnimal = async (conditions, animalId) => {
   try {
@@ -30,20 +29,47 @@ const getConditionsForAnimal = async (animalId) => {
       .select("c.name as condition", "a.name as name", "ac.id as id")
       .where("a.id", animalId);
 
-    const name = conditions[0].name;
-    const justConditions = conditions.map(
-      (c) => (c = { animalConditionId: c.id, condition: c.condition })
-    );
-    return { animalId: animalId, name: name, conditions: justConditions };
+    console.log("conditions", conditions);
+
+    // if no conditions, return empty array
+    if (!conditions.length) {
+      return conditions;
+    } else {
+      const name = conditions[0].name;
+      const justConditions = conditions.map(
+        (c) => (c = { animalConditionId: c.id, condition: c.condition })
+      );
+      return { animalId: animalId, name: name, conditions: justConditions };
+    }
   } catch (err) {
     console.log(err);
     return { error: err };
   }
 };
 
-const deleteConditionFromAnimal = async (animalId, conditionId) => {};
+const deleteConditionFromAnimal = async (animalConditionId) => {
+  try {
+    const animal = await db("animalConditions")
+      .where({ id: animalConditionId })
+      .select("animalId");
+
+    const animalId = animal[0].animalId;
+
+    const deleted = await db("animalConditions")
+      .where({ id: animalConditionId })
+      .del();
+
+    const conditionsLeft = await getConditionsForAnimal(animalId);
+
+    return conditionsLeft;
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
+};
 
 module.exports = {
   addConditionsToAnimal,
   getConditionsForAnimal,
+  deleteConditionFromAnimal,
 };
