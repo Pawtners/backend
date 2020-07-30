@@ -40,6 +40,7 @@ const deleteAnimal = async (id) => {
     return { error: err };
   }
 };
+
 module.exports = {
   registerAnimal,
   getAnimals,

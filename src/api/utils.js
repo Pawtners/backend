@@ -31,7 +31,6 @@ const checkIfStaff = async (req, res, next) => {
 
   try {
     const user = await Auth.getUser(id);
-    console.log(user);
     if (user.roleId === 1) {
       next();
     } else {
