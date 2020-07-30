@@ -57,6 +57,10 @@ router.put("/:id", async (req, res) => {
   const id = req.params.id;
   const updates = req.body;
 
+  // validate that the appointment exists
+
+  // validate that the animal exists
+
   try {
     const updatedAppt = await Appts.updateAppt(id, updates);
     return handleResponse(res, 200, { updated: updatedAppt });

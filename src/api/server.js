@@ -12,6 +12,7 @@ const server = express();
 const animalRoutes = require("./routes/animalsRoute");
 const authRoutes = require("./routes/authRoute");
 const apptsRoutes = require("./routes/apptsRoute");
+const conditionsRoutes = require("./routes/conditionsRoute");
 
 // Passport config
 require("./auth/passport")(passport);
@@ -54,6 +55,7 @@ server.use(passport.session());
 server.use("/auth", authRoutes);
 server.use("/animals", animalRoutes);
 server.use("/appts", apptsRoutes);
+server.use("/conditions", conditionsRoutes);
 
 server.get("/", (req, res) => {
   res.send("Pawtners server is running");

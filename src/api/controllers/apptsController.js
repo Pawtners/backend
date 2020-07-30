@@ -11,65 +11,80 @@ const addAppt = async (info) => {
 };
 
 const getAppts = async () => {
-  const appts = await db("appointments as a")
-    .join("animals", "a.animalId", "animals.id")
-    .join("species as s", "s.id", "animals.speciesId")
-    .join("breed as b", "b.id", "animals.breedId")
-    .select(
-      "a.id as id",
-      "a.animalId",
-      "a.date",
-      "a.time",
-      "animals.name",
-      "animals.birthday",
-      "animals.weight",
-      "s.type as species",
-      "b.name as breed"
-    );
+  try {
+    const appts = await db("appointments as a")
+      .join("animals", "a.animalId", "animals.id")
+      .join("species as s", "s.id", "animals.speciesId")
+      .join("breed as b", "b.id", "animals.breedId")
+      .select(
+        "a.id as id",
+        "a.animalId",
+        "a.date",
+        "a.time",
+        "animals.name",
+        "animals.birthday",
+        "animals.weight",
+        "s.type as species",
+        "b.name as breed"
+      );
 
-  return appts;
+    return appts;
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
 };
 
 const getAppt = async (id) => {
-  const appt = await db("appointments as a")
-    .join("animals", "a.animalId", "animals.id")
-    .join("species as s", "s.id", "animals.speciesId")
-    .join("breed as b", "b.id", "animals.breedId")
-    .select(
-      "a.id as id",
-      "a.animalId",
-      "a.date",
-      "a.time",
-      "animals.name",
-      "animals.birthday",
-      "animals.weight",
-      "s.type as species",
-      "b.name as breed"
-    )
-    .where({ "a.id": id });
+  try {
+    const appt = await db("appointments as a")
+      .join("animals", "a.animalId", "animals.id")
+      .join("species as s", "s.id", "animals.speciesId")
+      .join("breed as b", "b.id", "animals.breedId")
+      .select(
+        "a.id as id",
+        "a.animalId",
+        "a.date",
+        "a.time",
+        "animals.name",
+        "animals.birthday",
+        "animals.weight",
+        "s.type as species",
+        "b.name as breed"
+      )
+      .where({ "a.id": id });
 
-  return appt;
+    return appt;
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
 };
 
 const getApptByAnimal = async (animalId) => {
-  const appt = await db("appointments as a")
-    .join("animals", "a.animalId", "animals.id")
-    .join("species as s", "s.id", "animals.speciesId")
-    .join("breed as b", "b.id", "animals.breedId")
-    .select(
-      "a.id as id",
-      "a.animalId",
-      "a.date",
-      "a.time",
-      "animals.name",
-      "animals.birthday",
-      "animals.weight",
-      "s.type as species",
-      "b.name as breed"
-    )
-    .where({ "animals.id": animalId });
+  try {
+    const appt = await db("appointments as a")
+      .join("animals", "a.animalId", "animals.id")
+      .join("species as s", "s.id", "animals.speciesId")
+      .join("breed as b", "b.id", "animals.breedId")
+      .select(
+        "a.id as id",
+        "a.animalId",
+        "a.date",
+        "a.time",
+        "animals.name",
+        "animals.birthday",
+        "animals.weight",
+        "s.type as species",
+        "b.name as breed"
+      )
+      .where({ "animals.id": animalId });
 
-  return appt;
+    return appt;
+  } catch (err) {
+    console.log(err);
+    return { error: err };
+  }
 };
 
 const updateAppt = async (id, updates) => {
