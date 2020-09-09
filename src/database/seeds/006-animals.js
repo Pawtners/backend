@@ -6,6 +6,7 @@ exports.seed = (knex) => {
       weight: 6,
       speciesId: 1,
       breedId: 1,
+      sex: "male",
     },
     {
       name: "Frank",
@@ -13,6 +14,7 @@ exports.seed = (knex) => {
       weight: 7,
       speciesId: 1,
       breedId: 2,
+      sex: "male",
     },
     {
       name: "Dinah",
@@ -20,6 +22,7 @@ exports.seed = (knex) => {
       weight: 50,
       speciesId: 2,
       breedId: 7,
+      sex: "female",
     },
   ]);
 };

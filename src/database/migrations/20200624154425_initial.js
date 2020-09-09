@@ -51,6 +51,7 @@ exports.up = function (knex, Promise) {
       .createTable("animals", (table) => {
         table.increments();
         table.string("name", 128).notNullable();
+        table.string("sex", 10).notNullable();
         table.date("birthday");
         table.float("weight").notNullable();
         table.boolean("adopted").defaultTo(false);

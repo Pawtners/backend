@@ -38,6 +38,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.2.1",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^5.0.0"
   }
 }
